@@ -2,16 +2,16 @@
 
 Contents
 ========
-[Starting GDB](https://github.com/mark-i-m/tutorials/blob/master/gdb.md#starting-gdb)
-[Starting Execution](https://github.com/mark-i-m/tutorials/blob/master/gdb.md#starting-execution)
-[Debugging](https://github.com/mark-i-m/tutorials/blob/master/gdb.md#debugging)
-[Stepping through code](https://github.com/mark-i-m/tutorials/blob/master/gdb.md#stepping-through-code)
-[Printing data](https://github.com/mark-i-m/tutorials/blob/master/gdb.md#printing-data)
-[Convenience variables](https://github.com/mark-i-m/tutorials/blob/master/gdb.md#convenience-variables)
-[End Execution](https://github.com/mark-i-m/tutorials/blob/master/gdb.md#end-execution)
-[Shortcuts and helpful miscellaneous stuff](https://github.com/mark-i-m/tutorials/blob/master/gdb.md#shortcuts-and-helpful-miscellaneous-stuff)
-[TUI](https://github.com/mark-i-m/tutorials/blob/master/gdb.md#tui)
-[Help](https://github.com/mark-i-m/tutorials/blob/master/gdb.md#help)
+1.  [Starting GDB](https://github.com/mark-i-m/tutorials/blob/master/gdb.md#starting-gdb)
+2.  [Starting Execution](https://github.com/mark-i-m/tutorials/blob/master/gdb.md#starting-execution)
+3.  [Debugging](https://github.com/mark-i-m/tutorials/blob/master/gdb.md#debugging)
+4.  [Stepping through code](https://github.com/mark-i-m/tutorials/blob/master/gdb.md#stepping-through-code)
+5.  [Printing data](https://github.com/mark-i-m/tutorials/blob/master/gdb.md#printing-data)
+6.  [Convenience variables](https://github.com/mark-i-m/tutorials/blob/master/gdb.md#convenience-variables)
+7.  [End Execution](https://github.com/mark-i-m/tutorials/blob/master/gdb.md#end-execution)
+8.  [Shortcuts and helpful miscellaneous stuff](https://github.com/mark-i-m/tutorials/blob/master/gdb.md#shortcuts-and-helpful-miscellaneous-stuff)
+9.  [TUI](https://github.com/mark-i-m/tutorials/blob/master/gdb.md#tui)
+10. [Help](https://github.com/mark-i-m/tutorials/blob/master/gdb.md#help)
 
 Starting GDB
 ============
@@ -264,7 +264,7 @@ Example of `a` FMT:
 (gdb) p/a 0x54320|
 $3 = 0x54320 <_initialize_vx+396>|
 ```
-The command info symbol 0x54320 yields similar results. See `info symbol`.
+The command `info symbol 0x54320` yields similar results. See `info symbol`.
 
 Convenience variables
 =====================
@@ -272,6 +272,8 @@ Convenience variables
 GDB also defines some standard variables/macros that are helpful. You can uses these anywhere when a gdb command takes an expression:
 
 Some that I have found useful are
+
+
 | var | Meaning |
 |-----|---------|
 |`$pc` | The current PC |
@@ -357,6 +359,8 @@ layout split
 The `src` layout shows source (c/c++) code and the gdb command prompt. The `asm` layout shows assembly code and the gdb command prompt. The `split` layout shows all three.
 
 Some useful window names are:
+
+
 | Name | Window |
 |:----:|--------|
 |`cmd` | gdb command prompt |
