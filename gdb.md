@@ -6,6 +6,7 @@ Contents
 [Starting Execution](https://github.com/mark-i-m/tutorials/blob/master/gdb.md#starting-execution)
 [Debugging](https://github.com/mark-i-m/tutorials/blob/master/gdb.md#debugging)
 [Stepping through code](https://github.com/mark-i-m/tutorials/blob/master/gdb.md#stepping-through-code)
+[Printing data](https://github.com/mark-i-m/tutorials/blob/master/gdb.md#printing-data)
 
 Starting GDB
 ============
@@ -63,7 +64,7 @@ to start running the program before debugging it.
 
 To run with command line args:
 ```
-run <ars>
+run <args>
 ```
 
 If you attached gdb to a remote execution, you do not need to `run` because it is already running.
@@ -147,81 +148,109 @@ clear
 Stepping through code
 =====================
 
-To step through execution, you can use step or next. Step goes to the very next line executed. If this means entering a function, gdb will. Next will go to the next line in this function; if there is a function call inside this function, gdb will execute the line without stepping into it.
+To step through execution, you can use `step` or `next`. Step goes to the very next line executed. If this means entering a function, gdb will. Next will go to the next line in this function; if there is a function call inside this function, gdb will execute the line without stepping into it.
 
 To step:
+```
 step
+```
 
 To go to next line
+```
 next
+```
 
 Both of these commands can also accept a number, which is the number of lines/steps to take:
+```
 step 3
 next 3
+```
 
 There is also a version of step/next that steps by one assembly instruction:
-stepinexti
+```
+stepi
+nexti
 stepi 3
 nexti 3
+```
 
 To continue until the next break/watchpoint:
+```
 continue
+```
 
 To print out some lines of code around the line you are stopped at, use
+```
 list
+```
 If you call list again without advancing the execution, list will print out the next set of lines in the code. For example if you call list and it prints out lines 0 through 9, then if you call list again without calling next or step, gdb will print out lines 10-19.
 
 List can also take a line number. For example,
+```
 list 10
 list file.c:10
-will lines 5 through 15 (ten lines around line 10). The second line in this example shows that a filename can be used to print lines from other files (not the file where execution is stopped).
+```
+will list lines 5 through 15 (ten lines around line 10). The second line in this example shows that a filename can be used to print lines from other files (not the file where execution is stopped).
 
 List can also take a range of lines to print:
+```
 list 5,15
+```
 will print lines 5 to 15
 
 In addition, list can take a function name:
+```
 list foo
 list file.c:foo
-This will print ten lines of code around the beginning of function foo. Again, the file name can be used to disambiguate similar-named functions.
+```
+This will print ten lines of code around the beginning of function `foo`. Again, the file name can be used to disambiguate similar-named functions.
 
 
 Printing data
+=============
 
-There are two primary commands for displaying data: print and x (as in examine). Print prints the value of some expression, and x is used to print the contents of memory.
+There are two primary commands for displaying data: `print` and `x` (as in examine). `print` prints the value of some expression, and `x` is used to print the contents of memory.
 
 To print:
+```
 print <expression>
+```
 For example:
+```
 print ((char *)base) + 12
 print obj.toString()
+```
 
 To examine:
+```
 x <adr/expression>
+```
 For example:
+```
 x (size_t *)this
 x/d (size_t *)(this->getNext())
+```
 
-Print and x both also take formatting commands:
+`print` and `x` both also take formatting commands:
+```
 p/FMT <expression>
 x/FMT <adr>
+```
 
-FMT is one of the following (taken from GDB's documentation at https://sourceware.org/gdb/onlinedocs/gdb/Output-Formats.html)
-
-x        Regard the bits of the value as an integer, and print the integer in hexadecimal.
-
-d        Print as integer in signed decimal.
-
-u        Print as integer in unsigned decimal.
-
-o        Print as integer in octal
-
-t         Print as integer in binary (t stands for two)
-
-a        Print as an address, both absolute in hexadecimal and as an offset from the nearest preceding symbol. You can use this format used to discover where (in what function) an unknown address is located:
-(gdb) p/a 0x54320
-$3 = 0x54320 <_initialize_vx+396>
-The command info symbol 0x54320 yields similar results. See info symbol.
+FMT is one of the following (taken from [GDB's documentation](https://sourceware.org/gdb/onlinedocs/gdb/Output-Formats.html))
+FMT | Meaning
+----|---------
+`x` | Regard the bits of the value as an integer, and print the integer in hexadecimal.
+`d` | Print as integer in signed decimal.
+`u` | Print as integer in unsigned decimal.
+`o` | Print as integer in octal
+`t` | Print as integer in binary (t stands for two)
+`a` | Print as an address, both absolute in hexadecimal and as an offset from the nearest preceding symbol. You can use this format used to discover where (in what function) an unknown address is located:
+    | ```
+    |  (gdb) p/a 0x54320
+    |  $3 = 0x54320 <_initialize_vx+396>
+    |  The command info symbol 0x54320 yields similar results. See info symbol.
+    | ```
 
 c        Regard as an integer and print it as a character constant. This prints both the numerical value and its character representation. The character representation is replaced with the octal escape ‘\nnn’ for characters outside the 7-bit ASCII range.
 Without this format, GDB displays char, unsigned char, and signed char data as character constants. Single-byte members of vectors are displayed as integer data.
