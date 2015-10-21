@@ -7,6 +7,11 @@ Contents
 [Debugging](https://github.com/mark-i-m/tutorials/blob/master/gdb.md#debugging)
 [Stepping through code](https://github.com/mark-i-m/tutorials/blob/master/gdb.md#stepping-through-code)
 [Printing data](https://github.com/mark-i-m/tutorials/blob/master/gdb.md#printing-data)
+[Convenience variables](https://github.com/mark-i-m/tutorials/blob/master/gdb.md#convenience-variables)
+[End Execution](https://github.com/mark-i-m/tutorials/blob/master/gdb.md#end-execution)
+[Shortcuts and helpful miscellaneous stuff](https://github.com/mark-i-m/tutorials/blob/master/gdb.md#shortcuts-and-helpful-miscellaneous-stuff)
+[TUI](https://github.com/mark-i-m/tutorials/blob/master/gdb.md#tui)
+[Help](https://github.com/mark-i-m/tutorials/blob/master/gdb.md#help)
 
 Starting GDB
 ============
@@ -267,86 +272,123 @@ Convenience variables
 GDB also defines some standard variables/macros that are helpful. You can uses these anywhere when a gdb command takes an expression:
 
 Some that I have found useful are
-$pc     The current PC
-$eax... One for each of the registers, including the stack and base pointers
-$_       The output of the last x (examine) command
+| var | Meaning |
+|-----|---------|
+|`$pc` | The current PC |
+|`$eax`... | One for each of the registers, including the stack and base pointers |
+|`$_` | The output of the last `x` (examine) command |
 
 You can also create a variable for convenience with
+```
 set $var = <value>
-where var is the name of the variable you want to create, and value is the value.
-
+```
+where `var` is the name of the variable you want to create, and value is the `<value>`.
 
 End execution
-
+=============
 
 You can kill the current execution of the program with
+```
 kill
+```
 
 You can quit GDB (and end the program execution) with
+```
 quit
+```
 
 Both of these commands will ask you for confirmation. Note that after GDB has been attached to a process, killing/quiting GDB will kill the process as well.
 
-
 Shortcuts and helpful miscellaneous stuff
+=========================================
 
 Many of the common GDB commands have one-letter shortcuts that are convenient:
 
-run                     r
-break                 b
-list                     l    (lowercase L)
-next                   n
-step                   s
-nexti                  ni
-stepi                  si
-continue            c
-delete                d
-kill                      k
-quit                    q
+| Command | Shortcuts |
+|:-------:|:---------:|
+|`run`     | `r` |
+|`break`   | `b` |
+|`list`    | `l` (lowercase L) |
+|`next`    | `n` |
+|`step`    | `s` |
+|`nexti`   | `ni`|
+|`stepi`   | `si`|
+|`continue`| `c` |
+|`delete`  | `d` |
+|`kill`    | `k` |
+|`quit`    | `q` |
 
 If you press enter without entering a command, the last command will be re-executed.
 
 You can also define new commands for your convenience:
+```
 define foo
 > n
 > n
 > p/x bar
 > end
-This defines a new gdb command called foo which advances execution by two lines and prints the value of some variable "bar" as a hex number.
-Each line is a command you want to execute, and the "end" line tells gdb your done defining the command.
+```
+This defines a new gdb command called `foo` which advances execution by two lines and prints the value of `bar` as a hex number.
+Each line is a command you want to execute, and the `end` line tells gdb your done defining the command.
 
 TUI
+===
 
-GDB also has a curses-based mode, which can show code, assembly, and gdb command prompt at the same time. This is called TUI. It can be toggled from inside gdb with Ctrl-X, Ctrl-A. Alternately, it can be started with
+GDB also has a curses-based mode, which can show code, assembly, and gdb command prompt at the same time. This is called TUI. It can be toggled from inside gdb with `Ctrl-X, Ctrl-A`. Alternately, it can be started with
+```
 gdb -tui
+```
 when you start gdb.
 
-A complete guide to tui can be found at https://sourceware.org/gdb/current/onlinedocs/gdb/TUI.html
+A complete guide to tui can be found [here](https://sourceware.org/gdb/current/onlinedocs/gdb/TUI.html)
 
 TUI treats each part of the screen as a window. The focused window gets control of arrow keys and other special commands, but number typing always goes to the gdb command prompt. You can switch between windows using
+```
 focus <window>
+```
 
 To choose a different layout, use the layout command
+```
 layout src
 layout asm
 layout split
+```
 
-The src layout shows source (c/c++) code and the gdb command prompt. The asm layout shows assembly code and the gdb command prompt. The split layout shows all three.
+The `src` layout shows source (c/c++) code and the gdb command prompt. The `asm` layout shows assembly code and the gdb command prompt. The `split` layout shows all three.
 
 Some useful window names are:
-cmd          gdb command prompt
-src            the source (c/c++) code
-asm          assembly code (if this window is open)
+| Name | Window |
+|:----:|--------|
+|`cmd` | gdb command prompt |
+|`src` | source (c/c++) code |
+|`asm` | assembly code |
 
-There are some caveats to TUI, though. Most importantly, since tui uses curses, if your program has output to the command prompt, it will mess up the screen. You can always refresh using Ctrl-L, but it is still pretty annoying. The other important caveat is that sometimes it can be buggy if you toggle tui within GDB without a program executing.
-
+There are some caveats to TUI, though. Most importantly, since tui uses curses, if your program has output to `stdout`, it will mess up the screen. You can always refresh using `Ctrl-L`, but it is still pretty annoying. The other important caveat is that sometimes it can be buggy if you toggle tui within GDB without a program executing or if you resize the terminal while GDB is running.
 
 HELP!!!
+=======
 
-
-Finally, gdb has a help command that serves kind of like a man page. It can be used to lookup commands to see how they are used and what they do:
+Finally, gdb has a `help` command that serves as a sort of man page. It can be used to lookup commands to see how they are used and what they do:
+```
 help <command>
+```
 
 For example,
+```
 help list
-will display help info for the list command.
+```
+will display this:
+```
+List specified function or line.
+With no argument, lists ten more lines after or around previous listing.
+"list -" lists the ten lines before a previous ten-line listing.
+One argument specifies a line, and ten lines are listed around that line.
+Two arguments with comma between specify starting and ending lines to list.
+Lines can be specified in these ways:
+  LINENUM, to list around that line in current file,
+  FILE:LINENUM, to list around that line in that file,
+  FUNCTION, to list around beginning of that function,
+  FILE:FUNCTION, to distinguish among like-named static functions.
+  *ADDRESS, to list around the line containing that address.
+With two args if one is empty it stands for ten lines away from the other arg.
+```
