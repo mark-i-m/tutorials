@@ -2,95 +2,150 @@
 
 Contents
 ========
-[Starting GDB][1]
+[Starting GDB](https://github.com/mark-i-m/tutorials/blob/master/gdb.md#starting-gdb)
+[Starting Execution](https://github.com/mark-i-m/tutorials/blob/master/gdb.md#starting-execution)
+[Debugging](https://github.com/mark-i-m/tutorials/blob/master/gdb.md#debugging)
+[Stepping through code](https://github.com/mark-i-m/tutorials/blob/master/gdb.md#stepping-through-code)
 
-[1]: Starting GDB
+Starting GDB
 ============
 
+Compiling
+---------
+I will assume you are using gcc/g++, not LLVM-based compilers. These instructions should work equally well for both, but some of the compiler flags might be different.
+
+In order for the debugger to know what assembly lines correspond to what lines of code, you need to compile with debugging info: add the `-g` or `-ggdb` flags to the compilation command. You should also turn off compiler optimizations, as they can do some very intense transformations on the code and confuse the debugger: `-O0`.
+
+Remote Debugging
+----------------
 You can start gdb without a file by simply executing
+```
 gdb
+```
 
 You will then need to load an executable or symbol table. To load an executable,
+```
 file <filename>
+```
 
 To load a symtable
+```
 symbol-file <filename>
+```
 
-In both cases, you can use the executable file for <filename>, but in the second command, only the symbol table will be used.
+In both cases, you can use the executable file for `<filename>`, but in the second command, only the symbol table will be used.
 
 To attach gdb to a remotely running execution use
+```
 target remote <host>:<port>
+```
 
-For the kernel, use localhost:1234. Note that you should start the remote execution before you try to connect to it with gdb. If the remote execution terminates, you will need to redo this step the next time you run the program.
+For qemu, use `localhost:1234`. Note that you should start the remote execution *before* you try to connect to it with gdb. If the remote execution terminates, you will need to redo this step the next time you run the program.
 
+Local Debugging
+---------------
 You can also start gdb with a file:
+```
 gdb <filename>
+```
 
-If <filename> does not have a symtable, you can specify one as described above.
+If `<filename>` does not have a symtable, you can specify one as described above. If you compile with `-g`, there should be a symbol table.
 
 
-[2]: Starting execution
+Starting execution
 ==================
 
 If you started gdb with an executable (not a remote execution), use
+```
 run
+```
 to start running the program before debugging it.
 
-To run with parameter(s):
-run <parameters>
+To run with command line args:
+```
+run <ars>
+```
 
-If you attached gdb to a remote execution, you do not need to call run because it's already running.
+If you attached gdb to a remote execution, you do not need to `run` because it is already running.
 
 Debugging
+=========
 
 The first thing you should probably do is set breakpoints and watchpoints. Breakpoints stop exectution at a specific point in the program. Watchpoints stop the program when an expression's value changes.
 
 To set a breakpoint use
+```
 break <where>
+```
 
-<where> can take several forms:
-- If you want to set a breakpoint at the current line, leave <where> blank.
+`<where>` can take several forms:
+- If you want to set a breakpoint at the current line, leave `<where>` blank.
 - If you want to set a breakpoint at line x in the current file, use
+```
 break <x>
+```
 - If you want to set a breakpoint at line x in file y, use
+```
 break <y>:<x>
+```
 - If you want to set a breakpoint at function foo, use
+```
 break foo
+```
 - If there are multiple foo's in the program (only in C++, this cannot happen in C) you can disambiguate with the class name:
+```
 break ClassName::foo
+```
 - You can also disambiguate overridden functions with parameter types:
+```
 break foo(HeapNode *)
+```
 
 Furthermore, you can set conditional breakpoints:
+```
 break <where> if <condition>
-If <condition> is true when execution hits <where>, the execution stops.
+```
+If `<condition>` is true when execution hits `<where>`, the execution stops.
 
 You set a watchpoint with
+```
 watch <expression>
-When <expression> changes, execution will stop.
+```
+When `<expression>` changes, execution will stop.
 
 To see all watchpoints and breakpoints set, use
+```
 info b
+```
 or equivalently
+```
 info breakpoint
+```
 
 This will output a list of breakpoints/watchpoints, where they are in the program or when they occur, if they are conditional, if they are enabled, and a unique number for each one.
 
 To delete a break/watchpoint, use
+```
 delete <number>
-where <number> is the unique number for the breakpoint you want to delete (which you can get from "info b").
+```
+where `<number>` is the unique number for the breakpoint you want to delete (which you can get from `info b`).
 
 You can also use
+```
 clear <function name>
+```
+```
 clear <line number>
-which delete any break/watchpoints inside of <function> or at <line number>, respectively.
+```
+which delete any break/watchpoints inside of `<function>` or at `<line number>`, respectively.
 
 To clear all breakpoints, use
+```
 clear
-
+```
 
 Stepping through code
-
+=====================
 
 To step through execution, you can use step or next. Step goes to the very next line executed. If this means entering a function, gdb will. Next will go to the next line in this function; if there is a function call inside this function, gdb will execute the line without stepping into it.
 
