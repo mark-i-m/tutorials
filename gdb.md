@@ -238,32 +238,30 @@ x/FMT <adr>
 ```
 
 FMT is one of the following (taken from [GDB's documentation](https://sourceware.org/gdb/onlinedocs/gdb/Output-Formats.html))
-FMT | Meaning
-----|---------
-`x` | Regard the bits of the value as an integer, and print the integer in hexadecimal.
-`d` | Print as integer in signed decimal.
-`u` | Print as integer in unsigned decimal.
-`o` | Print as integer in octal
-`t` | Print as integer in binary (t stands for two)
-`a` | Print as an address, both absolute in hexadecimal and as an offset from the nearest preceding symbol. You can use this format used to discover where (in what function) an unknown address is located:
-    | ```
-    |  (gdb) p/a 0x54320
-    |  $3 = 0x54320 <_initialize_vx+396>
-    |  The command info symbol 0x54320 yields similar results. See info symbol.
-    | ```
-
-c        Regard as an integer and print it as a character constant. This prints both the numerical value and its character representation. The character representation is replaced with the octal escape ‘\nnn’ for characters outside the 7-bit ASCII range.
-Without this format, GDB displays char, unsigned char, and signed char data as character constants. Single-byte members of vectors are displayed as integer data.
-
-
-f        Regard the bits of the value as a floating point number and print using typical floating point syntax.
-
-s       Regard as a string, if possible. With this format, pointers to single-byte data are displayed as null-terminated strings and arrays of single-byte data are displayed as fixed-length strings. Other values are displayed in their natural types.
-Without this format, GDB displays pointers to and arrays of char, unsigned char, and signed char as strings. Single-byte members of a vector are displayed as an integer array.
-
-z       Like ‘x’ formatting, the value is treated as an integer and printed as hexadecimal, but leading zeros are printed to pad the value to the size of the integer type.
-
-r        Print using the ‘raw’ formatting. By default, GDB will use a Python-based pretty-printer, if one is available (see Pretty Printing). This typically results in a higher-level display of the value’s contents. The ‘r’ format bypasses any Python pretty-printer which might exist.
+|FMT | Meaning |
+|:--:|---------|
+|`x` | Regard the bits of the value as an integer, and print the integer in hexadecimal|
+|`d` | Print as integer in signed decimal|
+|`u` | Print as integer in unsigned decimal|
+|`o` | Print as integer in octal|
+|`t` | Print as integer in binary (t stands for two)|
+|`a` | Print as an address, both absolute in hexadecimal and as an offset from the nearest preceding symbol. You can use this format used to discover where (in what function) an unknown address is located:|
+|    |  (gdb) p/a 0x54320|
+|    |  $3 = 0x54320 <_initialize_vx+396>|
+|    |  The command info symbol 0x54320 yields similar results. See info symbol.|
+||
+|c        Regard as an integer and print it as a character constant. This prints both the numerical value and its character representation. The character representation is replaced with the octal escape ‘\nnn’ for characters outside the 7-bit ASCII range.|
+|Without this format, GDB displays char, unsigned char, and signed char data as character constants. Single-byte members of vectors are displayed as integer data.|
+||
+||
+|f        Regard the bits of the value as a floating point number and print using typical floating point syntax.|
+||
+|s       Regard as a string, if possible. With this format, pointers to single-byte data are displayed as null-terminated strings and arrays of single-byte data are displayed as fixed-length strings. Other values are displayed in their natural types.|
+|Without this format, GDB displays pointers to and arrays of char, unsigned char, and signed char as strings. Single-byte members of a vector are displayed as an integer array.|
+||
+|z       Like ‘x’ formatting, the value is treated as an integer and printed as hexadecimal, but leading zeros are printed to pad the value to the size of the integer type.|
+||
+|r        Print using the ‘raw’ formatting. By default, GDB will use a Python-based pretty-printer, if one is available (see Pretty Printing). This typically results in a higher-level display of the value’s contents. The ‘r’ format bypasses any Python pretty-printer which might exist.|
 
 
 Convenience variables
