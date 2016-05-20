@@ -110,4 +110,92 @@ permissions, owner, group, size, and date and time of creation.
 That's basically it. All commands have similar format. But there are some other
 really useful features that make shells so powerful.
 
-## 
+## `stdin`, `stdout`, `stderr`
+
+Let's try something new:
+
+```
+mark@demo ~/demo1/ $ cat demo_file.txt
+mark@demo ~/demo1/ $ 
+```
+
+As you probably guessed, we just executed `/bin/cat` with arguments `['cat',
+'demo_file.txt']`. But it doesn't seem to do anything...
+
+This is because `cat` simply dumps the contents of the file to the terminal, and
+it happens that `demo_file.txt` is completely empty. Let's put something into
+it.
+
+```
+mark@demo ~/demo1/ $ echo 'Hello, world!' > demo_file.txt
+mark@demo ~/demo1/ $ cat demo_file.txt
+Hello, world!
+mark@demo ~/demo1/ $ 
+```
+
+So how does this work? You might guess that we are running `/bin/echo` with
+`['echo', '\'Hello, world!\'', '>', 'demo_file.txt']`. Nope!
+
+Let me backup and explain another aspect of Unix. Each process has a numbered
+list of file descriptors. The process can do I/O via these files. The first
+three file descriptors (0, 1, and 2) are special. 0 is `stdin`; 1 is `stdout`;
+and 2 is `stderr`. `stdin` is the standard default file for getting input at
+runtime. `stdout` is the standard default file for printing output. `stderr` is
+the standard default file for printing errors.
+
+Usually, the three refer to the terminal that spawned the process. That is,
+`stdin` gets input from the keyboard, and `stdout` and `stderr` print to the
+screen. If we want to get input from or send output to somewhere else, we can
+simply change what the appropriate file descriptor points to.
+
+As a matter of fact, this is exactly what the `bash` syntax `>` does. In our
+example, if we simply run
+
+```
+mark@demo ~/demo1/ $ echo 'Hello, world!'
+Hello, world!
+```
+
+We can see that `/bin/echo` simply outputs whatever its arguments are, and we
+gave it the argument `'Hello, world!'` (the single quotes make this a single
+string, as opposed to two space-separated strings). By using `>` we redirected
+`stdout` for `echo` into the file `demo_file.txt`. Voila!
+
+You can also redirect `stdin`:
+
+```
+mark@demo ~/demo1/ $ grep 'Hello' < demo_file.txt
+Hello, world!
+```
+
+`grep` is a program that evaluates regular expressions on its `stdin`. In this
+case, it is looking for the string `Hello`. We redirect `stdin` for grep to be
+`demo_file.txt`. `grep` finds "Hello" in the phrase "Hello, world!" on the first
+line, so it outputs this line.
+
+As you might expect, we can also redirect `stderr`:
+
+```
+mark@demo ~/demo1/ $ ls nonsense 2> error.txt
+mark@demo ~/demo1/ $ cat error.txt 
+ls: cannot access 'nonsense': No such file or directory
+```
+
+Here, we are telling `ls` to tell us the contents of the `nonsense` directory.
+However, this directory does not exist, and `ls` promptly prints an error
+message telling us this. We redirected this error into `error.txt`.
+
+Finally, we can actually set `stdout` and `stderr` to the same location. This
+can be useful for logging:
+
+```
+mark@demo ~/demo1/ $ ls nonsense existing > out.txt 2>&1
+mark@demo ~/demo1/ $ cat out.txt 
+ls: cannot access 'nonsense': No such file or directory
+existing/:
+```
+
+The `2>&1` tells `bash` to send `stderr` to `stdout`. We could equally validly
+do `1>&2` to send `stdout` to `stderr`. `ls` tells us that `nonsense` does not
+exist and that `existing` is an empty directory. All of this is captured in
+`out.txt`.
