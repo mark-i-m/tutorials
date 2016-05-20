@@ -15,9 +15,11 @@ already. If this means nothing to you, that's ok.
 2. The basics
 3. `stdin`, `stdout`, `stderr`
 4. Pipes
-5. Interpreters
-6. Background processes
-7. Common commands
+5. Background processes
+6. Interpreters
+7. Scripting
+8. Common commands
+9. Subtleties
 
 ## What is a terminal (emulator)?
 
@@ -126,6 +128,12 @@ This is because `cat` simply dumps the contents of the file to the terminal, and
 it happens that `demo_file.txt` is completely empty. Let's put something into
 it.
 
+(As a useful sidenote, you might be getting tired of retyping `demo_file.txt`
+every time. Most shells now offer tab completion. For example, type `demo_`
+followed by tab. If `demo_` is enough for `bash` to figure out what you want, it
+will fill in the rest. Otherwise, it will print a list of ambiguous options. You
+can add some more characters and try again. This can really speed things up!)
+
 ```
 mark@demo ~/demo1/ $ echo 'Hello, world!' > demo_file.txt
 mark@demo ~/demo1/ $ cat demo_file.txt
@@ -199,3 +207,39 @@ The `2>&1` tells `bash` to send `stderr` to `stdout`. We could equally validly
 do `1>&2` to send `stdout` to `stderr`. `ls` tells us that `nonsense` does not
 exist and that `existing` is an empty directory. All of this is captured in
 `out.txt`.
+
+## Pipes
+
+So let's say that I want to check if the current directory has a file in it. One
+option would be to do `ls` and scan through the results. This works if the
+directory is small, but what if there are hundreds of files?
+
+Let's try using redirection.
+
+```
+mark@demo ~/demo1/ $ ls > /tmp/ls_output
+mark@demo ~/demo1/ $ grep 'some_file' /tmp/ls_output
+```
+
+We are running `ls` in the current directory and sending the output to
+`/tmp/ls_output`. Then, we use `grep` to look for `some_file` in the output. (A
+couple of quick notes: (1) Notice we ran `grep` passing `/tmp/ls_output` as an
+argument rather than piping, and (2) in reality, we could have just done `ls
+some_file`, which returns an error if `some_file` does not exist).
+
+This is a bit clunky, though. We don't really care about `/tmp/ls_output` except
+that we want to pass the output to `grep`. Thankfully, we can do just that with
+*pipes*!
+
+```
+mark@demo ~/demo1/ $ ls | grep 'some_file'
+```
+
+The `|` (called a pipe) syntax tells `bash` to redirect the `stdout` of `ls`
+into the `stdin` of `grep`. And we're done.
+
+This example might seem a bit contrived, but consider that we can string
+multiple pipes together on the same command. Unix is built on the notion that
+tools should do exactly one thing, and do it really well. We can then use
+multiple simple tools to break down a complex problem. For a good example, see
+[here](http://unix.stackexchange.com/questions/30759/whats-a-good-example-of-piping-commands-together).
