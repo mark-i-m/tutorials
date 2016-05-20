@@ -18,8 +18,7 @@ already. If this means nothing to you, that's ok.
 5. Background processes
 6. Interpreters
 7. Scripting
-8. Variables and Other Useful Tips
-9. Common commands
+8. Common commands
 
 ## What is a terminal (emulator)?
 
@@ -330,4 +329,74 @@ scripting...
 
 ## Scripting
 
+Shells don't just take commands from the prompt. Indeed, the terminal itself is
+an interpreter of a shell language! In our case, the language is the `bash`
+scripting language.
 
+The language is a complete scripting language. It has loops, conditionals,
+sequential execution, etc. I won't go into a more complex explanation in this
+tutorial. Frankly, IMHO, the language is not that great or easy to use.
+Moreover, different shell scripting languages have different syntax. The primary
+usefulness is for convenience scripting -- quick and dirty repetetive jobs,
+install scripts, and the like.
+
+Basically, a shell script contains commands, just like the ones we used above,
+and a few special keywords. Moreover, they can contain variables.
+
+```
+mark@demo ~/demo1/ $ cat demo_sh.sh
+#!/bin/bash
+
+NEWDIR=demo2
+mkdir $NEWDIR
+ls $NEWDIR > "$NEWDIR.txt"
+mark@demo ~/demo1/ $ ./demo_sh.sh
+```
+
+Here, we defined a variable `NEWDIR` with value `demo2`. We refer to the
+variable using the `$` as in `$NEWDIR`. So, we created a directory called
+`demo2`. Then, we ran `ls demo2` listing the contents of the new directory. The
+output of this command was then redirected to `demo2.txt` in the current
+directory.
+
+But wait there's more! Recall that the terminal itself is an interpreter. You
+can use bash scripting syntax in the terminal itself.
+
+```
+mark@demo ~/demo1/ $ NEWDIR=demo2 ; mkdir $NEWDIR ; ls $NEWDIR
+demo2/:
+```
+
+The semicolons allow you to put more than one command on the same line. Here we
+defined a variable `NEWDIR` and used it, just like before.
+
+And bash variables in the environment get passed to `exec`ed programs! It all
+comes full circle.
+
+If you would like to learn more shell scripting, you can easily find more by
+googling around.
+
+## Common commands
+
+This section is intended to be a useful reference of common utilities, its by no
+means exhaustive. If you have suggestions, please feel free to open a pull
+request.
+
+| Command | Functionality |
+|---------|---------------|
+| `man`   | This stands for "manual". If you want to know how to use command  `x`, just run `man x` to see the manual page ("man page"). Also, since most commands have tons of options, this can be a great way of avoiding trying to remember everything! |
+| `ls`    | See the contents of a directory. |
+| `cd`    | Change to another directory. |
+| `vim`   | A command line text editor. |
+| `ps`    | See a list of currently running processes. |
+| `mkdir` | Create a new directory. |
+| `touch` | Update the "last modified" time of a file, or create it if it does not exist. |
+| `cat`   | Dump the contents of a file (interpreting it as ASCII). |
+| `less`  | Show the contents of a file, allowing scrolling. |
+| `chmod` | Change the mode (file permissions) of a file or directory. |
+| `echo`  | Print the arguments to `stdout`. |
+| `kill`  | Send a signal to the given process (does not necessarily "kill"). |
+| `tar`   | Create or extract a tarball. |
+| `zip`, `unzip` | Create or extract a zip-archive. |
+| `sudo`  | Execute a command as super-user. |
+| `su`    | Change to another user. |
