@@ -18,8 +18,8 @@ already. If this means nothing to you, that's ok.
 5. Background processes
 6. Interpreters
 7. Scripting
-8. Common commands
-9. Subtleties
+8. Variables and Other Useful Tips
+9. Common commands
 
 ## What is a terminal (emulator)?
 
@@ -49,7 +49,7 @@ traditional Unix systems.
 
 The operating system exposes two primary system calls for creating and running
 new processes: `fork` and `exec`. `fork` makes an exact clone of this process.
-`exec` replaces this process with the specified program.  
+`exec` replaces this process with the specified program.
 
 The `exec` system call takes some parameters:
 
@@ -81,7 +81,7 @@ symbol is precede by some useful information, such as the name of the machine
 and the current directory. For example:
 
 ```
-mark@demo ~/demo1/ $ 
+mark@demo ~/demo1/ $
 ```
 
 Here, `mark` is my username. `demo` is the name of my machine. `~/demo1/` is the
@@ -118,7 +118,7 @@ Let's try something new:
 
 ```
 mark@demo ~/demo1/ $ cat demo_file.txt
-mark@demo ~/demo1/ $ 
+mark@demo ~/demo1/ $
 ```
 
 As you probably guessed, we just executed `/bin/cat` with arguments `['cat',
@@ -138,7 +138,7 @@ can add some more characters and try again. This can really speed things up!)
 mark@demo ~/demo1/ $ echo 'Hello, world!' > demo_file.txt
 mark@demo ~/demo1/ $ cat demo_file.txt
 Hello, world!
-mark@demo ~/demo1/ $ 
+mark@demo ~/demo1/ $
 ```
 
 So how does this work? You might guess that we are running `/bin/echo` with
@@ -185,7 +185,7 @@ As you might expect, we can also redirect `stderr`:
 
 ```
 mark@demo ~/demo1/ $ ls nonsense 2> error.txt
-mark@demo ~/demo1/ $ cat error.txt 
+mark@demo ~/demo1/ $ cat error.txt
 ls: cannot access 'nonsense': No such file or directory
 ```
 
@@ -198,7 +198,7 @@ can be useful for logging:
 
 ```
 mark@demo ~/demo1/ $ ls nonsense existing > out.txt 2>&1
-mark@demo ~/demo1/ $ cat out.txt 
+mark@demo ~/demo1/ $ cat out.txt
 ls: cannot access 'nonsense': No such file or directory
 existing/:
 ```
@@ -301,10 +301,33 @@ in the first place:
 ```
 mark@demo ~/demo1/ $ ./long.py &
 [1] 13976
-mark@demo ~/demo1/ $ 
+mark@demo ~/demo1/ $
 ```
 
 `bash` starts the process and immediately presents a new prompt.
 
 ## Interpreters
+
+You may be wondering how we could just run `./long.py` in the previous example.
+After all, python files are not machine code... you cannot just run them; you
+need an interpreter. This is true. So what is the secret?
+
+```
+mark@demo ~/demo1/ $ cat long.py
+#!/usr/bin/env python2
+...
+```
+
+If the first two characters of a file (with executable permissions) are `#!` (I
+have a friend who pronounces this "sha-bang"), the shell will assume this line
+names an interpreter for the rest of the file. In this case, `bash` will not
+`exec` `long.py`. Instead, it will `exec` `/usr/bin/env` with the argument
+`python2` and redirect `stdin` to the rest of `long.py`.
+
+This turns out to be a useful trick for cutting down on typing, especially if
+you are providing someone else with a quick utility script. And speaking of
+scripting...
+
+## Scripting
+
 
