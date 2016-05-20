@@ -243,3 +243,68 @@ multiple pipes together on the same command. Unix is built on the notion that
 tools should do exactly one thing, and do it really well. We can then use
 multiple simple tools to break down a complex problem. For a good example, see
 [here](http://unix.stackexchange.com/questions/30759/whats-a-good-example-of-piping-commands-together).
+
+## Background processes
+
+Let's say I am running a python script on my terminal, and I want to quickly
+check the contents of the current directory. But I can't because the script has
+control of the terminal right now...
+
+One option would be to go to the directory in another terminal. For the purpose
+of illustration, I won't do that. Instead, I will hit `Ctrl-z`. This stops the
+python script and returns control of the terminal to me. I can run other
+commands now. When I want to return to running the script, I can use the `fg`
+(foreground) command to return the script to the foreground.
+
+```
+mark@demo ~/demo1/ $ ./long.py
+^Z
+[1]+ Stopped                    ./long.py
+mark@demo ~/demo1/ $ ls
+...
+mark@demo ~/demo1/ $ fg
+./long.py
+^C
+```
+
+Ok, there is a lot to go through here. First, let me address `Ctrl-z` and
+`Ctrl-c`. These are keyboard shortcuts that tell the operating system to send
+*signals* to the current process. `Ctrl-z` is caught by `bash`, and `bash` then
+causes the python process to stop running for the moment. `Ctrl-c` goes straight
+to the python script. Usually, `Ctrl-c` kills a process, but the program being
+run can choose to catch the signal. This is usually done to avoid corrupting
+data.
+
+Generally, you should be very careful when using `Ctrl-z` and `Ctrl-c` because
+you can corrupt data by interrupting at the wrong time!
+
+So what does `fg` do? As you probably guessed, it tells `bash` to switch control
+back over to the python process and let python pick up where it paused. But what
+if we actually wanted python to keep running in the background?
+
+```
+mark@demo ~/demo1/ $ ./long.py
+^Z
+[1]+ Stopped                    ./long.py
+mark@demo ~/demo1/ $ bg
+[1]+ ./long.py &
+mark@demo ~/demo1/ $ ls
+...
+```
+
+The `bg` command tells `bash` to allow the python process to continue but in the
+background.
+
+As a matter of fact, we could have started the python process in the background
+in the first place:
+
+```
+mark@demo ~/demo1/ $ ./long.py &
+[1] 13976
+mark@demo ~/demo1/ $ 
+```
+
+`bash` starts the process and immediately presents a new prompt.
+
+## Interpreters
+
